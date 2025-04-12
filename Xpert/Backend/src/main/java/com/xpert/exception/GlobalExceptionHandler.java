@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * Global exception handler for centralized error handling across all controllers.
@@ -50,11 +51,18 @@ public class GlobalExceptionHandler {
 
     private ResponseEntity<Object> buildErrorResponse(HttpStatus status, String message, String path) {
         Map<String, Object> errorDetails = new HashMap<>();
+
+        String errorId = UUID.randomUUID().toString(); //  Error ID for traceability
+        log.debug("Generated error response with ID: {}", errorId); //  Trace it in logs
+
         errorDetails.put("timestamp", Instant.now());
         errorDetails.put("status", status.value());
         errorDetails.put("error", status.getReasonPhrase());
         errorDetails.put("message", message);
         errorDetails.put("path", path);
+        errorDetails.put("errorId", errorId); //  Include in API response
+
         return new ResponseEntity<>(errorDetails, status);
     }
+
 }
