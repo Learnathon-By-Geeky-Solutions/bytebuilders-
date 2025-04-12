@@ -2,6 +2,7 @@ package com.xpert.dto.order;
 
 import com.xpert.enums.OrderStatus;
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 import lombok.Data;
 
 import java.time.Instant;
@@ -12,6 +13,7 @@ import java.util.UUID;
  * Used to return order data with full metadata including client, xpert, and timestamps.
  */
 @Data
+@Builder
 public class OrderResponseDTO {
 
     /**
@@ -69,4 +71,9 @@ public class OrderResponseDTO {
      * Timestamp when the order was last updated.
      */
     private Instant updatedAt;
+
+    /**
+     * Version field for optimistic locking (optional).
+     */
+    private Long version;
 }
