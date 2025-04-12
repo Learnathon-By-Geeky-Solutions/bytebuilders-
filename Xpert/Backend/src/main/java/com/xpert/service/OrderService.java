@@ -2,9 +2,8 @@ package com.xpert.service;
 
 import com.xpert.dto.order.CreateOrderRequestDTO;
 import com.xpert.dto.order.OrderResponseDTO;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
-
-import java.util.UUID;
 
 /**
  * Service interface for managing booking orders.
@@ -17,12 +16,12 @@ public interface OrderService {
      * @param dto the request data to create the order
      * @return the created order response
      * @throws IllegalArgumentException if dto contains invalid data
-     * @throws ServiceException if order creation fails due to system error
+     * @throws RuntimeException if order creation fails due to system error
      */
     OrderResponseDTO createOrder(CreateOrderRequestDTO dto);
 
     /**
-     * Retrieves all orders in the system with pagination.
+     * Retrieves a paginated list of all orders in the system.
      *
      * @param page the page number (zero-based)
      * @param size the page size
@@ -37,5 +36,5 @@ public interface OrderService {
      * @return the order response
      * @throws EntityNotFoundException if no order exists with the given ID
      */
-    OrderResponseDTO getOrderById(UUID orderId);
+    OrderResponseDTO getOrderById(java.util.UUID orderId);
 }
