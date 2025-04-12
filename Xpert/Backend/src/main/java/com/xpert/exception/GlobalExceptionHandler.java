@@ -40,7 +40,15 @@ public class GlobalExceptionHandler {
             fieldErrors.put(fieldError.getField(), fieldError.getDefaultMessage());
         }
         log.warn("Validation failed: {}", fieldErrors);
-        return new ResponseEntity<>(fieldErrors, HttpStatus.BAD_REQUEST);
+          
+           Map<String, Object> errorResponse = new HashMap<>();
+           errorResponse.put("timestamp", Instant.now());
+           errorResponse.put("status", HttpStatus.BAD_REQUEST.value());
+           errorResponse.put("error", HttpStatus.BAD_REQUEST.getReasonPhrase());
+           errorResponse.put("message", "Validation failed");
+           errorResponse.put("path", request.getRequestURI());
+           errorResponse.put("errors", fieldErrors);
+           return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(Exception.class)
