@@ -17,15 +17,19 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.UUID;
 
+/**
+ * Service implementation for managing booking orders.
+ */
 @Service
 @RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
-    private final UserRepository userRepository;
     private final AgreementRepository agreementRepository;
+    private final UserRepository userRepository;
     private final ModelMapper modelMapper;
 
     @Override
@@ -45,6 +49,8 @@ public class OrderServiceImpl implements OrderService {
                 .xpert(xpert)
                 .scheduledTime(dto.getScheduledTime())
                 .status(OrderStatus.PLACED)
+                .createdAt(Instant.now())
+                .updatedAt(Instant.now())
                 .build();
 
         Order savedOrder = orderRepository.save(order);
@@ -61,6 +67,7 @@ public class OrderServiceImpl implements OrderService {
     public OrderResponseDTO getOrderById(UUID orderId) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new EntityNotFoundException("Order not found with ID: " + orderId));
+
         return modelMapper.map(order, OrderResponseDTO.class);
     }
 }
