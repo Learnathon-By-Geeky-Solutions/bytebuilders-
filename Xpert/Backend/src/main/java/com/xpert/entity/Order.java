@@ -6,8 +6,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
 
 import java.time.Instant;
+import java.util.UUID;
 
 @Data
 @Builder
@@ -17,11 +20,13 @@ import java.time.Instant;
 @Table(name = "orders")
 public class Order {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+	@Id
+	@GeneratedValue
+	@Column(name = "id", updatable = false, nullable = false, columnDefinition = "BINARY(16)")
+	private UUID id;
 
-    // FK → agreements.id
+
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "agreement_id", nullable = false)
     private Agreement agreement;
@@ -56,10 +61,7 @@ public class Order {
     @Column(name = "updated_at", nullable = false)
     private Instant updatedAt = Instant.now();
 
-    
     @Version
     @Column(name = "version")
     private Long version;
-
-   
 }
