@@ -6,8 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Type;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -24,9 +22,7 @@ public class Order {
 	@GeneratedValue
 	@Column(name = "id", updatable = false, nullable = false, columnDefinition = "BINARY(16)")
 	private UUID id;
-
-
-
+	
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "agreement_id", nullable = false)
     private Agreement agreement;
