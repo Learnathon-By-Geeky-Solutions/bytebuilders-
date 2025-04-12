@@ -3,18 +3,26 @@ package com.xpert.entity;
 import com.xpert.enums.AgreementStatus;
 import com.xpert.enums.AgreementType;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalTime;
+import java.util.UUID;
 
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "agreements")
 public class Agreement {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+	@Id
+    @GeneratedValue
+    @Column(name = "id", updatable = false, nullable = false, columnDefinition = "BINARY(16)")
+    private UUID id;
 
     // FK → users.id (client)
     @ManyToOne(fetch = FetchType.LAZY)
@@ -56,56 +64,4 @@ public class Agreement {
     @Column(name = "updated_at", nullable = false)
     private Instant updatedAt = Instant.now();
 
-    // Constructors
-    public Agreement() {}
-
-    public Agreement(Users client, Users xpert, WorkUnit workUnit, Location location,
-                     AgreementType type, LocalTime totalEstimatedTime, BigDecimal totalPrice,
-                     AgreementStatus status) {
-        this.client = client;
-        this.xpert = xpert;
-        this.workUnit = workUnit;
-        this.location = location;
-        this.type = type;
-        this.totalEstimatedTime = totalEstimatedTime;
-        this.totalPrice = totalPrice;
-        this.status = status;
-        this.createdAt = Instant.now();
-        this.updatedAt = Instant.now();
-    }
-
-    // Getters and Setters
-
-    public Integer getId() { return id; }
-    public void setId(Integer id) { this.id = id; }
-
-    public Users getClient() { return client; }
-    public void setClient(Users client) { this.client = client; }
-
-    public Users getXpert() { return xpert; }
-    public void setXpert(Users xpert) { this.xpert = xpert; }
-
-    public WorkUnit getWorkUnit() { return workUnit; }
-    public void setWorkUnit(WorkUnit workUnit) { this.workUnit = workUnit; }
-
-    public Location getLocation() { return location; }
-    public void setLocation(Location location) { this.location = location; }
-
-    public AgreementType getType() { return type; }
-    public void setType(AgreementType type) { this.type = type; }
-
-    public LocalTime getTotalEstimatedTime() { return totalEstimatedTime; }
-    public void setTotalEstimatedTime(LocalTime totalEstimatedTime) { this.totalEstimatedTime = totalEstimatedTime; }
-
-    public BigDecimal getTotalPrice() { return totalPrice; }
-    public void setTotalPrice(BigDecimal totalPrice) { this.totalPrice = totalPrice; }
-
-    public AgreementStatus getStatus() { return status; }
-    public void setStatus(AgreementStatus status) { this.status = status; }
-
-    public Instant getCreatedAt() { return createdAt; }
-    public void setCreatedAt(Instant createdAt) { this.createdAt = createdAt; }
-
-    public Instant getUpdatedAt() { return updatedAt; }
-    public void setUpdatedAt(Instant updatedAt) { this.updatedAt = updatedAt; }
 }
