@@ -4,11 +4,9 @@ import com.xpert.enums.AgreementStatus;
 import com.xpert.enums.AgreementType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalTime;
