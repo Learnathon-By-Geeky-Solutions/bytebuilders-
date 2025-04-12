@@ -9,7 +9,7 @@ import java.util.UUID;
 public class ReviewRequestDTO {
 
     @NotNull(message = "Order ID is required")
-    private Integer orderId;
+    private UUID orderId;
 
     @NotNull(message = "Client ID is required")
     private UUID clientId;
