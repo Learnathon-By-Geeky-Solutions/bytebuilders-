@@ -4,7 +4,8 @@ import com.xpert.dto.ChatDTO;
 import com.xpert.dto.CreateChatRequestDTO;
 import com.xpert.service.ChatService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,10 +13,11 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/chats")
+@RequiredArgsConstructor
 public class ChatController {
 
-	@Autowired
-	private ChatService chatService;
+	
+	private final ChatService chatService;
 
 	// Create a new chat
 	@PostMapping
