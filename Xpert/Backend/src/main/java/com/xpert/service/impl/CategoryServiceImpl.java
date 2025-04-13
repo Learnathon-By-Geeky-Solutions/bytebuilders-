@@ -6,23 +6,24 @@ import com.xpert.entity.Category;
 import com.xpert.repository.CategoryRepository;
 import com.xpert.service.CategoryService;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class CategoryServiceImpl implements CategoryService {
 
-    @Autowired
-    private CategoryRepository categoryRepository;
 
-    @Autowired
-    private ModelMapper modelMapper;
+    private final CategoryRepository categoryRepository;
+
+    
+    private final ModelMapper modelMapper;
 
     @Override
     public CategoryDTO createCategory(CreateCategoryRequestDTO dto) {
@@ -44,8 +45,9 @@ public class CategoryServiceImpl implements CategoryService {
         List<Category> categories = categoryRepository.findAll();
         return categories.stream()
                 .map(this::mapToDTO)
-                .collect(Collectors.toList());
+                .toList(); 
     }
+
 
     @Override
     public CategoryDTO getCategoryById(Integer id) {
@@ -66,11 +68,12 @@ public class CategoryServiceImpl implements CategoryService {
         // Recursively map subcategories
         if (category.getSubcategories() != null && !category.getSubcategories().isEmpty()) {
             dto.setSubcategories(
-                    category.getSubcategories().stream()
-                            .map(this::mapToDTO)
-                            .collect(Collectors.toList())
+                category.getSubcategories().stream()
+                    .map(this::mapToDTO)
+                    .toList()
             );
         }
+
 
         return dto;
     }
