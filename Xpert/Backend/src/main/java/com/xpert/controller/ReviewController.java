@@ -18,10 +18,14 @@ public class ReviewController {
     private final ReviewService reviewService;
 
     /**
-     * Endpoint to create a new review for a completed order.
+     * Creates a new review based on the provided details.
      *
-     * @param reviewRequest the review request data
-     * @return success message
+     * @param reviewRequest DTO containing review content, rating, etc.
+     * @return A ResponseEntity with a confirmation message (String) upon success
+     *
+     * Note: Returns a String for simplicity since no ReviewDTO is returned.
+     * If the system evolves to return a full ReviewDTO object,
+     * this should be updated to maintain consistency across controllers.
      */
     @PostMapping
     public ResponseEntity<String> createReview(@Valid @RequestBody ReviewRequestDTO reviewRequest) {
