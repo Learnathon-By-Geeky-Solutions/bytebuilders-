@@ -1,119 +1,81 @@
 package com.xpert.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Entity representing extended profile information for a user.
+ */
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@EqualsAndHashCode(onlyExplicitlyIncluded = true) // ✅ Equality based only on userId
 @Entity
 @Table(name = "user_profile")
 public class UserProfile {
 
+    /**
+     * Primary key that maps directly to the user ID.
+     */
     @Id
+    @EqualsAndHashCode.Include // ✅ Include this field in equals/hashCode
     @Column(name = "user_id", nullable = false)
-    private UUID userId;  // References users.id
+    private UUID userId;
 
+    /**
+     * One-to-one relationship with the user entity.
+     * This also acts as the foreign key and primary key due to @MapsId.
+     */
     @OneToOne
     @MapsId
     @JoinColumn(name = "user_id")
-    private Users user;  // Assuming a User entity exists
+    private Users user;
 
+    /**
+     * Profile image (URL or base64 or path depending on implementation).
+     */
     @Column(columnDefinition = "TEXT")
     private String image;
 
+    /**
+     * Short bio or about section.
+     */
     @Column(columnDefinition = "TEXT")
     private String description;
 
+    /**
+     * Work history or summary of experiences.
+     */
     @Column(name = "experiences_in_short", columnDefinition = "TEXT")
     private String experiencesInShort;
 
-    @Column(columnDefinition = "TEXT") // Can be changed if file handling is different
+    /**
+     * File path or text data for CV/resume.
+     */
+    @Column(columnDefinition = "TEXT")
     private String cv;
 
+    /**
+     * Number of completed jobs or contracts.
+     */
     @Column(name = "completed_works")
     private Integer completedWorks;
 
+    /**
+     * Notification list (e.g., messages, alerts, updates).
+     */
     @ElementCollection
     @CollectionTable(name = "user_notifications", joinColumns = @JoinColumn(name = "user_id"))
     @Column(name = "notification", columnDefinition = "TEXT")
-    private List<String> notifications;  // Storing as a text array equivalent
-
-    // Constructors
-    public UserProfile() {
-    }
-
-    public UserProfile(UUID userId, Users user, String image, String description, String experiencesInShort, String cv, Integer completedWorks, List<String> notifications) {
-        this.userId = userId;
-        this.user = user;
-        this.image = image;
-        this.description = description;
-        this.experiencesInShort = experiencesInShort;
-        this.cv = cv;
-        this.completedWorks = completedWorks;
-        this.notifications = notifications;
-    }
-
-    // Getters and Setters
-    public UUID getUserId() {
-        return userId;
-    }
-
-    public void setUserId(UUID userId) {
-        this.userId = userId;
-    }
-
-    public Users getUser() {
-        return user;
-    }
-
-    public void setUser(Users user) {
-        this.user = user;
-    }
-
-    public String getImage() {
-        return image;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getExperiencesInShort() {
-        return experiencesInShort;
-    }
-
-    public void setExperiencesInShort(String experiencesInShort) {
-        this.experiencesInShort = experiencesInShort;
-    }
-
-    public String getCv() {
-        return cv;
-    }
-
-    public void setCv(String cv) {
-        this.cv = cv;
-    }
-
-    public Integer getCompletedWorks() {
-        return completedWorks;
-    }
-
-    public void setCompletedWorks(Integer completedWorks) {
-        this.completedWorks = completedWorks;
-    }
-
-    public List<String> getNotifications() {
-        return notifications;
-    }
-
-    public void setNotifications(List<String> notifications) {
-        this.notifications = notifications;
-    }
+    private List<String> notifications;
 }

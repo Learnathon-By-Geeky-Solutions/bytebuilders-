@@ -7,6 +7,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface UserDeviceLoginInfoRepository extends JpaRepository<UserDeviceLoginInfo, Long> {
-    
-    // List<UserDeviceLoginInfo> findByUserId(UUID userId);
+  
 }
