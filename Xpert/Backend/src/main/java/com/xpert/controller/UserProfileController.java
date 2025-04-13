@@ -4,7 +4,8 @@ import com.xpert.dto.user.UpdateUserProfileDTO;
 import com.xpert.dto.user.UserProfileDTO;
 import com.xpert.service.UserProfileService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,18 +13,31 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/user-profiles")
+@RequiredArgsConstructor // Enables constructor-based injection for final fields
 public class UserProfileController {
 
-    @Autowired
-    private UserProfileService userProfileService;
+    private final UserProfileService userProfileService; // Constructor injection preferred over field injection
 
-    // Get profile by userId
+    /**
+     * Retrieve the user profile details by user ID.
+     * 
+     * @param userId UUID of the user
+     * @return UserProfileDTO with personal and account info
+     */
+    
     @GetMapping("/{userId}")
     public UserProfileDTO getUserProfile(@PathVariable UUID userId) {
         return userProfileService.getUserProfile(userId);
     }
 
-    // Update profile
+    /**
+     * Update profile details for the given user.
+     * 
+     * @param userId UUID of the user
+     * @param dto New profile data
+     * @return Updated UserProfileDTO
+     */
+    
     @PutMapping("/{userId}")
     public UserProfileDTO updateUserProfile(
             @PathVariable UUID userId,
@@ -31,13 +45,26 @@ public class UserProfileController {
         return userProfileService.updateUserProfile(userId, dto);
     }
 
-    // Get notifications
+    /**
+     * Retrieve the list of active notifications for a user.
+     * 
+     * @param userId UUID of the user
+     * @return List of notification strings
+     */
+    
     @GetMapping("/{userId}/notifications")
     public List<String> getNotifications(@PathVariable UUID userId) {
         return userProfileService.getNotifications(userId);
     }
 
-    // Update notifications
+    /**
+     * Replace the user's notifications with a new list.
+     * 
+     * @param userId UUID of the user
+     * @param notifications Updated list of notifications
+     * @return Final saved list of notifications
+     */
+    
     @PutMapping("/{userId}/notifications")
     public List<String> updateNotifications(
             @PathVariable UUID userId,

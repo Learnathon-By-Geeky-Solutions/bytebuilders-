@@ -4,7 +4,8 @@ import com.xpert.dto.address.CreateUserAddressDTO;
 import com.xpert.dto.address.UserAddressDTO;
 import com.xpert.service.UserAddressService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,10 +14,11 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/user-addresses")
+@RequiredArgsConstructor
 public class UserAddressController {
 
-    @Autowired
-    private UserAddressService userAddressService;
+  
+    private final UserAddressService userAddressService;
 
     /**
      * Create a new address for the given user.
