@@ -2,10 +2,18 @@ package com.xpert.entity;
 
 import com.xpert.enums.ChatType;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "chats")
 public class Chat {
@@ -36,31 +44,4 @@ public class Chat {
     @OneToMany(mappedBy = "chat", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ChatMessage> messages;
 
-    // Constructors
-    public Chat() {}
-
-    // Getters & Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-
-    public ChatType getType() { return type; }
-    public void setType(ChatType type) { this.type = type; }
-
-    public String getTitle() { return title; }
-    public void setTitle(String title) { this.title = title; }
-
-    public Long getOrderId() { return orderId; }
-    public void setOrderId(Long orderId) { this.orderId = orderId; }
-
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
-
-    public LocalDateTime getLastMessageAt() { return lastMessageAt; }
-    public void setLastMessageAt(LocalDateTime lastMessageAt) { this.lastMessageAt = lastMessageAt; }
-
-    public List<ChatParticipant> getParticipants() { return participants; }
-    public void setParticipants(List<ChatParticipant> participants) { this.participants = participants; }
-
-    public List<ChatMessage> getMessages() { return messages; }
-    public void setMessages(List<ChatMessage> messages) { this.messages = messages; }
 }
