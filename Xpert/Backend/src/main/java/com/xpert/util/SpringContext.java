@@ -15,9 +15,11 @@ public class SpringContext implements ApplicationContextAware {
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) {
         // Set static context only once
-        if (SpringContext.context == null) {
-            SpringContext.context = applicationContext;
-        }
+    	 synchronized(SpringContext.class) {
+    		        if (SpringContext.context == null) {
+    		             SpringContext.context = applicationContext;
+    		         }
+    		    }
     }
 
     public static <T> T getBean(Class<T> beanClass) {
