@@ -8,25 +8,25 @@ import com.xpert.repository.UserAddressRepository;
 import com.xpert.repository.UserRepository;
 import com.xpert.service.UserAddressService;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class UserAddressServiceImpl implements UserAddressService {
+	
+	private static final String ADDRESS_NOT_FOUND = "Address not found";
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private UserAddressRepository addressRepository;
+    private final UserAddressRepository addressRepository;
 
-    @Autowired
-    private ModelMapper modelMapper;
+    private final ModelMapper modelMapper;
 
     @Override
     @Transactional
@@ -55,13 +55,13 @@ public class UserAddressServiceImpl implements UserAddressService {
         return addressRepository.findByUserAndIsDeletedFalse(user)
                 .stream()
                 .map(this::toDTO)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
     public UserAddressDTO getAddressById(UUID userId, UUID addressId) {
         UserAddress address = addressRepository.findByIdAndUser(addressId, getUser(userId))
-                .orElseThrow(() -> new RuntimeException("Address not found"));
+                .orElseThrow(() -> new RuntimeException(ADDRESS_NOT_FOUND));
 
         return toDTO(address);
     }
@@ -69,7 +69,7 @@ public class UserAddressServiceImpl implements UserAddressService {
     @Override
     public UserAddressDTO updateAddress(UUID userId, UUID addressId, CreateUserAddressDTO dto) {
         UserAddress address = addressRepository.findByIdAndUser(addressId, getUser(userId))
-                .orElseThrow(() -> new RuntimeException("Address not found"));
+                .orElseThrow(() -> new RuntimeException(ADDRESS_NOT_FOUND));
 
         if (Boolean.TRUE.equals(dto.getIsDefault())) {
             addressRepository.findByUserId(userId)
@@ -88,7 +88,7 @@ public class UserAddressServiceImpl implements UserAddressService {
     @Override
     public void deleteAddress(UUID userId, UUID addressId) {
         UserAddress address = addressRepository.findByIdAndUser(addressId, getUser(userId))
-                .orElseThrow(() -> new RuntimeException("Address not found"));
+                .orElseThrow(() -> new RuntimeException(ADDRESS_NOT_FOUND));
 
         address.setIsDeleted(true);
         addressRepository.save(address);
