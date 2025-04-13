@@ -1,5 +1,6 @@
 package com.xpert.exception;
 
+
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -33,6 +34,12 @@ public class GlobalExceptionHandler {
         return buildErrorResponse(HttpStatus.NOT_FOUND, ex.getMessage(), request.getRequestURI());
     }
 
+    @ExceptionHandler(EncryptionException.class)
+    public ResponseEntity<Object> handleEncryptionException(EncryptionException ex, HttpServletRequest request) {
+        log.error("EncryptionException: {}", ex.getMessage(), ex);
+        return buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Encryption processing failed", request.getRequestURI());
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Object> handleValidationErrors(MethodArgumentNotValidException ex, HttpServletRequest request) {
         Map<String, String> fieldErrors = new HashMap<>();
@@ -40,15 +47,15 @@ public class GlobalExceptionHandler {
             fieldErrors.put(fieldError.getField(), fieldError.getDefaultMessage());
         }
         log.warn("Validation failed: {}", fieldErrors);
-          
-           Map<String, Object> errorResponse = new HashMap<>();
-           errorResponse.put("timestamp", Instant.now());
-           errorResponse.put("status", HttpStatus.BAD_REQUEST.value());
-           errorResponse.put("error", HttpStatus.BAD_REQUEST.getReasonPhrase());
-           errorResponse.put("message", "Validation failed");
-           errorResponse.put("path", request.getRequestURI());
-           errorResponse.put("errors", fieldErrors);
-           return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+
+        Map<String, Object> errorResponse = new HashMap<>();
+        errorResponse.put("timestamp", Instant.now());
+        errorResponse.put("status", HttpStatus.BAD_REQUEST.value());
+        errorResponse.put("error", HttpStatus.BAD_REQUEST.getReasonPhrase());
+        errorResponse.put("message", "Validation failed");
+        errorResponse.put("path", request.getRequestURI());
+        errorResponse.put("errors", fieldErrors);
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(Exception.class)
@@ -59,18 +66,17 @@ public class GlobalExceptionHandler {
 
     private ResponseEntity<Object> buildErrorResponse(HttpStatus status, String message, String path) {
         Map<String, Object> errorDetails = new HashMap<>();
+        String errorId = UUID.randomUUID().toString(); // For traceability
 
-        String errorId = UUID.randomUUID().toString(); //  Error ID for traceability
-        log.debug("Generated error response with ID: {}", errorId); //  Trace it in logs
+        log.debug("Generated error response with ID: {}", errorId);
 
         errorDetails.put("timestamp", Instant.now());
         errorDetails.put("status", status.value());
         errorDetails.put("error", status.getReasonPhrase());
         errorDetails.put("message", message);
         errorDetails.put("path", path);
-        errorDetails.put("errorId", errorId); //  Include in API response
+        errorDetails.put("errorId", errorId);
 
         return new ResponseEntity<>(errorDetails, status);
     }
-
 }
