@@ -7,29 +7,31 @@ import com.xpert.entity.Users;
 import com.xpert.repository.UserProfileRepository;
 import com.xpert.repository.UserRepository;
 import com.xpert.service.UserProfileService;
+
+import lombok.RequiredArgsConstructor;
+
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class UserProfileServiceImpl implements UserProfileService {
+	
+	private static final String PROFILE_NOT_FOUND = "User profile not found";
 
-    @Autowired
-    private UserProfileRepository userProfileRepository;
+    private final UserProfileRepository userProfileRepository;
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private ModelMapper modelMapper;
+    private final ModelMapper modelMapper;
 
     @Override
     public UserProfileDTO getUserProfile(UUID userId) {
         UserProfile profile = userProfileRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User profile not found"));
+                .orElseThrow(() -> new RuntimeException(PROFILE_NOT_FOUND));
         return toDTO(profile);
     }
 
@@ -55,14 +57,14 @@ public class UserProfileServiceImpl implements UserProfileService {
     @Override
     public List<String> getNotifications(UUID userId) {
         UserProfile profile = userProfileRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User profile not found"));
+                .orElseThrow(() -> new RuntimeException(PROFILE_NOT_FOUND));
         return profile.getNotifications();
     }
 
     @Override
     public List<String> updateNotifications(UUID userId, List<String> notifications) {
         UserProfile profile = userProfileRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User profile not found"));
+                .orElseThrow(() -> new RuntimeException(PROFILE_NOT_FOUND));
         profile.setNotifications(notifications);
         userProfileRepository.save(profile);
         return notifications;
