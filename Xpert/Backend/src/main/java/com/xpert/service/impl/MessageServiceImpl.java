@@ -11,8 +11,10 @@ import com.xpert.repository.ChatAttachmentRepository;
 import com.xpert.repository.ChatMessageRepository;
 import com.xpert.repository.ChatRepository;
 import com.xpert.service.MessageService;
+
+import lombok.RequiredArgsConstructor;
+
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -21,19 +23,16 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class MessageServiceImpl implements MessageService {
 
-    @Autowired
-    private ChatRepository chatRepository;
+    private final  ChatRepository chatRepository;
 
-    @Autowired
-    private ChatMessageRepository chatMessageRepository;
+    private final  ChatMessageRepository chatMessageRepository;
 
-    @Autowired
-    private ChatAttachmentRepository chatAttachmentRepository;
+    private final  ChatAttachmentRepository chatAttachmentRepository;
 
-    @Autowired
-    private ModelMapper modelMapper;
+    private final  ModelMapper modelMapper;
 
     @Override
     public ChatMessageDTO sendMessage(SendMessageRequestDTO dto) {
@@ -61,8 +60,8 @@ public class MessageServiceImpl implements MessageService {
         chatRepository.save(chat);
 
         List<ChatAttachmentDTO> attachmentDTOs = savedAttachments.stream()
-                .map(att -> modelMapper.map(att, ChatAttachmentDTO.class))
-                .collect(Collectors.toList());
+        	    .map(att -> modelMapper.map(att, ChatAttachmentDTO.class))
+        	    .toList();  
 
         ChatMessageDTO response = modelMapper.map(savedMessage, ChatMessageDTO.class);
         response.setAttachments(attachmentDTOs);
@@ -78,11 +77,11 @@ public class MessageServiceImpl implements MessageService {
                     List<ChatAttachmentDTO> attachmentDTOs = msg.getAttachments() != null
                             ? msg.getAttachments().stream()
                             .map(att -> modelMapper.map(att, ChatAttachmentDTO.class))
-                            .collect(Collectors.toList())
+                            .toList()
                             : Collections.emptyList();
 
                     dto.setAttachments(attachmentDTOs);
                     return dto;
-                }).collect(Collectors.toList());
+                }) .toList();
     }
 }
