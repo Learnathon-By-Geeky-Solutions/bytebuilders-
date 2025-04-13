@@ -7,8 +7,10 @@ import com.xpert.entity.ChatParticipant;
 import com.xpert.repository.ChatParticipantRepository;
 import com.xpert.repository.ChatRepository;
 import com.xpert.service.ChatService;
+
+import lombok.RequiredArgsConstructor;
+
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -16,16 +18,17 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class ChatServiceImpl implements ChatService {
 
-    @Autowired
-    private ChatRepository chatRepository;
+ 
+    private final ChatRepository chatRepository;
 
-    @Autowired
-    private ChatParticipantRepository chatParticipantRepository;
+   
+    private final ChatParticipantRepository chatParticipantRepository;
 
-    @Autowired
-    private ModelMapper modelMapper;
+ 
+    private final  ModelMapper modelMapper;
 
     @Override
     public ChatDTO createChat(CreateChatRequestDTO dto) {
@@ -48,13 +51,16 @@ public class ChatServiceImpl implements ChatService {
     @Override
     public List<ChatDTO> getChatsForUser(Long userId) {
         return chatRepository.findDistinctByParticipants_UserId(userId).stream()
-                .map(chat -> {
-                    ChatDTO dto = modelMapper.map(chat, ChatDTO.class);
-                    dto.setParticipantIds(chat.getParticipants().stream()
-                            .map(ChatParticipant::getUserId)
-                            .collect(Collectors.toList()));
-                    return dto;
-                })
-                .collect(Collectors.toList());
+            .map(chat -> {
+                ChatDTO dto = modelMapper.map(chat, ChatDTO.class);
+                dto.setParticipantIds(
+                    chat.getParticipants().stream()
+                        .map(ChatParticipant::getUserId)
+                        .toList() 
+                );
+                return dto;
+            })
+            .toList(); 
     }
+
 }
