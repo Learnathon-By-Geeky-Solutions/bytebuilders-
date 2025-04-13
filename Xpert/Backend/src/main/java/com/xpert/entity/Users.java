@@ -4,10 +4,25 @@ import com.xpert.converter.EncryptedStringConverter;
 import com.xpert.enums.UserRole;
 import com.xpert.enums.UserStatus;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.Instant;
 import java.util.UUID;
 
+/**
+ * Entity representing a registered user of the platform.
+ */
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
 @Table(name = "users", uniqueConstraints = {
         @UniqueConstraint(columnNames = "email"),
@@ -15,85 +30,87 @@ import java.util.UUID;
 })
 public class Users {
 
+    /**
+     * Primary key (UUID). Secure and unique.
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @EqualsAndHashCode.Include
     private UUID id;
 
+    /**
+     * Encrypted email address (used for login & identity).
+     */
     @Convert(converter = EncryptedStringConverter.class)
     @Column(nullable = false, length = 255, unique = true)
     private String email;
 
+    /**
+     * Encrypted phone number (used for 2FA / contact).
+     */
     @Convert(converter = EncryptedStringConverter.class)
     @Column(nullable = false, length = 255, unique = true)
     private String phone;
 
-
+    /**
+     * Hashed password string (never store plain text).
+     */
     @Column(nullable = false)
     private String passwordHash;
 
+    /**
+     * Email or phone verification flag.
+     */
+    @Builder.Default
     @Column(nullable = false)
     private Boolean isVerified = false;
 
+    /**
+     * Account creation timestamp.
+     */
+    @Builder.Default
     @Column(nullable = false, updatable = false)
     private Instant createdAt = Instant.now();
 
+    /**
+     * Last update timestamp.
+     */
+    @Builder.Default
     @Column(nullable = false)
     private Instant updatedAt = Instant.now();
 
+    /**
+     * User's first name (used for profile display).
+     */
     @Column(nullable = false, length = 20)
     private String firstName;
 
+    /**
+     * User's last name (used for profile display).
+     */
     @Column(nullable = false, length = 20)
     private String lastName;
 
+    /**
+     * Current status of the user (ACTIVE, INACTIVE, etc).
+     */
+    @Builder.Default
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 15)
-    private UserStatus status = UserStatus.INACTIVE; // default
+    private UserStatus status = UserStatus.INACTIVE;
 
+    /**
+     * Role of the user (ADMIN, XPERT, CUSTOMER).
+     */
+    @Builder.Default
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 15)
-    private UserRole role = UserRole.CUSTOMER; // default
+    private UserRole role = UserRole.CUSTOMER;
 
+    /**
+     * Whether the user is active and allowed to login.
+     */
+    @Builder.Default
     @Column(nullable = false)
     private Boolean isActive = false;
-
-    // Constructors
-    public Users() {}
-
-    // Getters & Setters
-    public UUID getId() { return id; }
-    public void setId(UUID id) { this.id = id; }
-
-    public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email; }
-
-    public String getPhone() { return phone; }
-    public void setPhone(String phone) { this.phone = phone; }
-
-    public String getPasswordHash() { return passwordHash; }
-    public void setPasswordHash(String passwordHash) { this.passwordHash = passwordHash; }
-
-    public Boolean getIsVerified() { return isVerified; }
-    public void setIsVerified(Boolean isVerified) { this.isVerified = isVerified; }
-
-    public Instant getCreatedAt() { return createdAt; }
-    public void setCreatedAt(Instant createdAt) { this.createdAt = createdAt; }
-
-    public Instant getUpdatedAt() { return updatedAt; }
-    public void setUpdatedAt(Instant updatedAt) { this.updatedAt = updatedAt; }
-
-    public String getFirstName() { return firstName; }
-    public void setFirstName(String firstName) { this.firstName = firstName; }
-
-    public String getLastName() { return lastName; }
-    public void setLastName(String lastName) { this.lastName = lastName; }
-
-    public UserStatus getStatus() { return status; }
-    public void setStatus(UserStatus status) { this.status = status; }
-
-    public UserRole getRole() { return role; }
-    public void setRole(UserRole role) { this.role = role; }
-
-    public Boolean getIsActive() { return isActive; }
-    public void setIsActive(Boolean isActive) { this.isActive = isActive; }
 }
