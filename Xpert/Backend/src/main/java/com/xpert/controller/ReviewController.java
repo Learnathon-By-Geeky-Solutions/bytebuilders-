@@ -24,7 +24,7 @@ public class ReviewController {
      * @return success message
      */
     @PostMapping
-    public ResponseEntity<?> createReview(@Valid @RequestBody ReviewRequestDTO reviewRequest) {
+    public ResponseEntity<String> createReview(@Valid @RequestBody ReviewRequestDTO reviewRequest) {
         reviewService.createReview(reviewRequest);
         return ResponseEntity.ok("Review submitted successfully!"); //  Clear success message
     }
