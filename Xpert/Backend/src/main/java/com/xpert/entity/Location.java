@@ -5,13 +5,18 @@ import lombok.*;
 
 import java.util.UUID;
 
+import com.xpert.entity.common.BaseAddress;
+
 @Entity
 @Table(name = "location")
-@Data
+@Getter
+@Setter
+@ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Location {
+public class Location extends BaseAddress {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -19,21 +24,6 @@ public class Location {
 
     @Column(length = 255)
     private String title;
-
-    @Column(nullable = false, length = 50)
-    private String country;
-
-    @Column(nullable = false, length = 100)
-    private String city;
-
-    @Column(nullable = false, length = 100)
-    private String state;
-
-    @Column(name = "zip_code", nullable = false, length = 10)
-    private String zipCode;
-
-    @Column(name = "street_address", nullable = false, columnDefinition = "TEXT")
-    private String streetAddress;
 
     @Column(name = "special_instruction", columnDefinition = "TEXT")
     private String specialInstruction;
