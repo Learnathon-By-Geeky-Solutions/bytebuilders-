@@ -11,6 +11,10 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 /**
  * Entity representing an invoice for a service order.
  * Invoices store billing details, references, and financial status
@@ -21,8 +25,11 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
 @Table(name = "invoices")
+@EntityListeners(AuditingEntityListener.class)
+
 public class Invoice {
 
     /**
@@ -30,6 +37,7 @@ public class Invoice {
      */
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @EqualsAndHashCode.Include
     @Column(name = "id", nullable = false, updatable = false, columnDefinition = "BINARY(16)")
     private UUID id;
 
@@ -99,14 +107,14 @@ public class Invoice {
     /**
      * Timestamp of invoice record creation.
      */
-    @Builder.Default
-    @Column(name = "created_at", nullable = false)
-    private Instant createdAt = Instant.now();
+    @CreatedDate
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private Instant createdAt;
 
     /**
      * Timestamp of the last update to this invoice.
      */
-    @Builder.Default
+    @LastModifiedDate
     @Column(name = "updated_at", nullable = false)
-    private Instant updatedAt = Instant.now();
+    private Instant updatedAt;
 }
