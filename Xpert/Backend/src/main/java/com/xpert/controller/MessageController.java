@@ -4,27 +4,43 @@ import com.xpert.dto.ChatMessageDTO;
 import com.xpert.dto.SendMessageRequestDTO;
 import com.xpert.service.MessageService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * REST controller for managing chat messages.
+ */
+
 @RestController
 @RequestMapping("/api/messages")
+@RequiredArgsConstructor
 public class MessageController {
 
-    @Autowired
-    private MessageService messageService;
+   
+    private final MessageService messageService;
 
-    // Send a new message
+    /**
+     * Sends a new message in a chat.
+     *
+     * @param dto the message send request
+     * @return the created ChatMessageDTO
+     */
     @PostMapping
     public ResponseEntity<ChatMessageDTO> sendMessage(@Valid @RequestBody SendMessageRequestDTO dto) {
         ChatMessageDTO messageDTO = messageService.sendMessage(dto);
         return ResponseEntity.ok(messageDTO);
     }
 
-    // Get message history for a chat
+    /**
+     * Retrieves the message history for a specific chat.
+     *
+     * @param chatId the ID of the chat
+     * @return list of ChatMessageDTOs
+     */
     @GetMapping("/chat/{chatId}")
     public ResponseEntity<List<ChatMessageDTO>> getMessagesByChat(@PathVariable Long chatId) {
         List<ChatMessageDTO> messages = messageService.getMessagesByChatId(chatId);
