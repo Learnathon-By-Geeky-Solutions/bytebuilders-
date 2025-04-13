@@ -4,7 +4,8 @@ import com.xpert.dto.ChatDTO;
 import com.xpert.dto.CreateChatRequestDTO;
 import com.xpert.service.ChatService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,22 +13,31 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/chats")
+@RequiredArgsConstructor
 public class ChatController {
 
-	@Autowired
-	private ChatService chatService;
+	
+	private final ChatService chatService;
 
-	// Create a new chat
-	@PostMapping
-	public ResponseEntity<ChatDTO> createChat(@Valid @RequestBody CreateChatRequestDTO dto) {
-		ChatDTO chatDTO = chatService.createChat(dto);
-		return ResponseEntity.ok(chatDTO);
-	}
+	 /**
+     * Creates a new chat.
+     *
+     * @param dto the chat request DTO
+     * @return the created chat
+     */
+    @PostMapping
+    public ResponseEntity<ChatDTO> createChat(@Valid @RequestBody CreateChatRequestDTO dto) {
+        return ResponseEntity.ok(chatService.createChat(dto));
+    }
 
-	// Get all chats for a specific user
-	@GetMapping("/user/{userId}")
-	public ResponseEntity<List<ChatDTO>> getChatsForUser(@PathVariable Long userId) {
-		List<ChatDTO> chats = chatService.getChatsForUser(userId);
-		return ResponseEntity.ok(chats);
-	}
+    /**
+     * Retrieves all chats for a given user.
+     *
+     * @param userId the user's ID
+     * @return list of chat DTOs
+     */
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<ChatDTO>> getChatsForUser(@PathVariable Long userId) {
+        return ResponseEntity.ok(chatService.getChatsForUser(userId));
+    }
 }
