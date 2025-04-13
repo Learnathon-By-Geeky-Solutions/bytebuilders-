@@ -7,9 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class XpertApplication {
 
 	public static void main(String[] args) {
-		 SpringApplication.run(XpertApplication.class, args);
-		
-	
+		SpringApplication.run(XpertApplication.class, args);
     }
 
 }
