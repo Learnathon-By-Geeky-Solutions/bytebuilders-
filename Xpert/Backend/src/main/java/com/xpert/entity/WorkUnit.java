@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.time.LocalTime;
 import java.util.UUID;
 
 @Entity
@@ -28,7 +29,8 @@ public class WorkUnit {
     private String description;
 
     @Column(name = "estimated_time")
-    private Integer estimatedTime;
+    private LocalTime estimatedTime;
+
 
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal price;
