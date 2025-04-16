@@ -48,7 +48,15 @@ public class CreateAgreementRequestDTO {
      * Estimated time to complete the service (hh:mm:ss).
      */
     @NotNull(message = "Total estimated time is required")
+    @AssertTrue(message = "Total estimated time must be positive and not exceed 24 hours")
+    private boolean isValidTotalEstimatedTime() {
+        return totalEstimatedTime != null &&
+               !totalEstimatedTime.equals(LocalTime.MIDNIGHT) &&
+               totalEstimatedTime.compareTo(LocalTime.of(24, 0)) < 0;
+    }
+
     private LocalTime totalEstimatedTime;
+
 
     /**
      * Total agreed price for the service.
