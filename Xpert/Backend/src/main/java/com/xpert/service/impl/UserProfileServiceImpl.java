@@ -68,7 +68,7 @@ public class UserProfileServiceImpl implements UserProfileService {
         profile.setNotifications(notifications);
         userProfileRepository.save(profile);
         return notifications;
-    }
+    }///comment
 
     private UserProfileDTO toDTO(UserProfile profile) {
         return modelMapper.map(profile, UserProfileDTO.class);
