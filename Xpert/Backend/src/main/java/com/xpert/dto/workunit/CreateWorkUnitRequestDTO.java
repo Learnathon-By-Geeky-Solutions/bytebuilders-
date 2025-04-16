@@ -2,6 +2,7 @@ package com.xpert.dto.workunit;
 
 import jakarta.validation.constraints.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
@@ -14,6 +15,7 @@ import java.time.LocalTime;
 @Getter
 @Setter
 @ToString
+@NoArgsConstructor
 public class CreateWorkUnitRequestDTO {
 
     /**
@@ -33,14 +35,14 @@ public class CreateWorkUnitRequestDTO {
      * Estimated time to complete the service (hh:mm:ss).
      */
     @NotNull(message = "Estimated time is required")
+    private LocalTime estimatedTime;
+
     @AssertTrue(message = "Estimated time must be positive and under 24 hours")
-    private boolean isValidEstimatedTime() {
+    private boolean validEstimatedTime() {
         return estimatedTime != null &&
-               !estimatedTime.equals(LocalTime.MIDNIGHT) &&
                estimatedTime.compareTo(LocalTime.of(24, 0)) < 0;
     }
 
-    private LocalTime estimatedTime;
 
     /**
      * Price of the service.
