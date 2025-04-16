@@ -2,9 +2,7 @@ package com.xpert.dto.agreement;
 
 import com.xpert.enums.AgreementType;
 import jakarta.validation.constraints.*;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.Data;
 
 import java.math.BigDecimal;
 import java.time.LocalTime;
@@ -13,9 +11,7 @@ import java.util.UUID;
 /**
  * DTO for creating a new agreement between a client and an expert.
  */
-@Getter
-@Setter
-@ToString
+@Data
 public class CreateAgreementRequestDTO {
 
     /**
@@ -59,5 +55,6 @@ public class CreateAgreementRequestDTO {
      */
     @NotNull(message = "Total price is required")
     @DecimalMin(value = "0.0", inclusive = false, message = "Price must be greater than zero")
+    @Digits(integer = 10, fraction = 2, message = "Price can have up to 10 digits and 2 decimal places")
     private BigDecimal totalPrice;
 }
