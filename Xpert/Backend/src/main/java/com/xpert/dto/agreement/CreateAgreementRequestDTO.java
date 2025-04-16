@@ -4,6 +4,7 @@ import com.xpert.enums.AgreementType;
 import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.math.BigDecimal;
 import java.time.LocalTime;
@@ -14,6 +15,7 @@ import java.util.UUID;
  */
 @Getter
 @Setter
+@ToString
 public class CreateAgreementRequestDTO {
 
     /**
