@@ -14,7 +14,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @NoArgsConstructor
-@ToString
+@ToString(exclude = {"streetAddress", "specialInstruction"})
 public class CreateLocationRequestDTO {
 
     /**
