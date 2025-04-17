@@ -44,6 +44,7 @@ public class LocationServiceImpl implements LocationService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional(readOnly = true)
     public LocationResponseDTO getLocationById(UUID id) {
         log.info("Fetching location with ID: {}", id);
 
@@ -52,4 +53,5 @@ public class LocationServiceImpl implements LocationService {
 
         return modelMapper.map(location, LocationResponseDTO.class);
     }
+
 }
