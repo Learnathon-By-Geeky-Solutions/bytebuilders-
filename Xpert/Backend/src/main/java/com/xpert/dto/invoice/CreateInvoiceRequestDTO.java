@@ -1,8 +1,11 @@
 package com.xpert.dto.invoice;
 
 import jakarta.validation.constraints.*;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -14,6 +17,9 @@ import java.util.UUID;
  */
 @Getter
 @Setter
+@ToString(exclude = {"referenceId"})
+@EqualsAndHashCode
+@NoArgsConstructor
 public class CreateInvoiceRequestDTO {
 
     /**
