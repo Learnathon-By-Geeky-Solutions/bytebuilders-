@@ -9,6 +9,8 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,8 +37,8 @@ public class PaymentController {
     @PostMapping
     @Operation(summary = "Create a payment", description = "Creates a new payment record for an order")
     public ResponseEntity<PaymentResponseDTO> createPayment(@Valid @RequestBody CreatePaymentRequestDTO dto) {
-        log.info("POST /api/payments - Payload: {}", dto);
-        return ResponseEntity.ok(paymentService.createPayment(dto));
+    	log.info("POST /api/payments - Request received for order: {}", dto.getOrderId());
+        return ResponseEntity.status(HttpStatus.CREATED).body(paymentService.createPayment(dto));
     }
 
     /**
