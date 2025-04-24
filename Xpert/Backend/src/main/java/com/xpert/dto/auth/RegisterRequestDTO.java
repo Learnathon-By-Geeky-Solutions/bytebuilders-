@@ -4,13 +4,21 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
 
 /**
  * DTO representing a user registration request.
  * Used for the /api/auth/register endpoint.
  */
-@Data
+@Getter
+@Setter
+@EqualsAndHashCode
+@ToString(exclude = "password")
+
 public class RegisterRequestDTO {
 
     /**
@@ -38,7 +46,7 @@ public class RegisterRequestDTO {
      * User's phone number (must be digits only).
      */
     @NotBlank(message = "Phone number must not be blank")
-    @Pattern(regexp = "^[0-9]{10,15}$", message = "Phone number must contain 10 to 15 digits")
+    @Pattern(regexp = "^\\d{11}$", message = "Phone number must be exactly 11 digits")
     private String phone;
 
     /**
