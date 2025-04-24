@@ -2,6 +2,7 @@ package com.xpert.controller;
 
 import com.xpert.dto.auth.AuthenticationRequest;
 import com.xpert.dto.auth.AuthenticationResponse;
+import com.xpert.dto.auth.RegisterRequestDTO;
 import com.xpert.service.AuthenticationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +33,19 @@ public class AuthenticationController {
     public ResponseEntity<AuthenticationResponse> login(@Valid @RequestBody AuthenticationRequest request) {
         log.info("Received login request for email: {}", request.getEmail());
         AuthenticationResponse response = authenticationService.login(request);
+        return ResponseEntity.status(OK).body(response);
+    }
+
+    /**
+     * Registers a new user and returns a JWT token if successful.
+     *
+     * @param request The registration request DTO containing user details
+     * @return JWT token response
+     */
+    @PostMapping("/register")
+    public ResponseEntity<AuthenticationResponse> register(@Valid @RequestBody RegisterRequestDTO request) {
+        log.info("Received registration request for email: {}", request.getEmail());
+        AuthenticationResponse response = authenticationService.register(request);
         return ResponseEntity.status(OK).body(response);
     }
 }
