@@ -2,7 +2,9 @@ package com.xpert.service.impl;
 
 import com.xpert.dto.auth.AuthenticationRequest;
 import com.xpert.dto.auth.AuthenticationResponse;
+import com.xpert.dto.auth.RegisterRequestDTO;
 import com.xpert.entity.Users;
+import com.xpert.enums.UserRole;
 import com.xpert.repository.UserRepository;
 import com.xpert.security.JwtService;
 import com.xpert.service.AuthenticationService;
@@ -14,7 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 /**
- * Implementation of AuthenticationService for handling login logic.
+ * Implementation of AuthenticationService for handling login and registration logic.
  */
 @Service
 @RequiredArgsConstructor
@@ -43,6 +45,38 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         String token = jwtService.generateToken(user.getEmail());
         log.info("Authentication successful for user: {}", request.getEmail());
 
+        return AuthenticationResponse.builder().token(token).build();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public AuthenticationResponse register(RegisterRequestDTO request) {
+        log.info("Registering new user with email: {}", request.getEmail());
+
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new IllegalArgumentException("Email is already registered");
+        }
+
+        if (userRepository.existsByPhone(request.getPhone())) {
+            throw new IllegalArgumentException("Phone number is already registered");
+        }
+
+        Users newUser = Users.builder()
+                .firstName(request.getFirstName())
+                .lastName(request.getLastName())
+                .email(request.getEmail())
+                .phone(request.getPhone())
+                .passwordHash(passwordEncoder.encode(request.getPassword()))
+                .isActive(true)
+                .role(UserRole.CUSTOMER)
+                .build();
+
+        userRepository.save(newUser);
+        log.info("User registered successfully with email: {}", request.getEmail());
+
+        String token = jwtService.generateToken(newUser.getEmail());
         return AuthenticationResponse.builder().token(token).build();
     }
 }
