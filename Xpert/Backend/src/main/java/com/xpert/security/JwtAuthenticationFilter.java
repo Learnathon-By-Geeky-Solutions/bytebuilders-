@@ -20,7 +20,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    // ✅ Avoid field name conflict with GenericFilterBean.logger
+    // Avoid field name conflict with GenericFilterBean.logger
     private static final Logger jwtLogger = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
 
     private final JwtService jwtService;
