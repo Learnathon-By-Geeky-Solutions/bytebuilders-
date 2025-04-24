@@ -39,8 +39,9 @@ public class Agreement {
 
     // FK → work_unit.id
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "work_unit_id", nullable = false)
+    @JoinColumn(name = "work_unit_id", nullable = false, columnDefinition = "BINARY(16)")
     private WorkUnit workUnit;
+
 
     // FK → location.id
     @ManyToOne(fetch = FetchType.LAZY)
