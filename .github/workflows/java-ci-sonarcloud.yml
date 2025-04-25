@@ -43,6 +43,7 @@ jobs:
             -Dsonar.tests=src/test/java
             -Dsonar.java.binaries=target/classes
             -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
+            -Dsonar.coverage.exclusions=**/*.java
             -Dsonar.coverage.inclusions=src/main/java/com/xpert/service/impl/**/*.java
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
