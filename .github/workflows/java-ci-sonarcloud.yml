@@ -39,8 +39,10 @@ jobs:
           args: >
             -Dsonar.projectKey=Learnathon-By-Geeky-Solutions_bytebuilders-
             -Dsonar.organization=learnathon-by-geeky-solutions
-            -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
+            -Dsonar.sources=src/main/java
+            -Dsonar.tests=src/test/java
             -Dsonar.java.binaries=target/classes
+            -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
             -Dsonar.coverage.inclusions=src/main/java/com/xpert/service/impl/**/*.java
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
