@@ -18,6 +18,7 @@ import java.util.List;
 @Table(name = "chats")
 public class Chat {
 
+	//Chat Id
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

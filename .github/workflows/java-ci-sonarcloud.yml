@@ -35,6 +35,7 @@ jobs:
       - name: SonarCloud scan
         uses: SonarSource/sonarcloud-github-action@v2
         with:
+          projectBaseDir: ./Xpert/Backend
           args: >
             -Dsonar.projectKey=Learnathon-By-Geeky-Solutions_bytebuilders-
             -Dsonar.organization=learnathon-by-geeky-solutions
@@ -42,4 +43,3 @@ jobs:
             -Dsonar.java.binaries=target/classes
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        working-directory: ./Xpert/Backend
