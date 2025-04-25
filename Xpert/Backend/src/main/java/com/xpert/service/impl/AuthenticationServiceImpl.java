@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 /**
  * Implementation of AuthenticationService for handling login and registration logic.
  */
+//annotation
 @Service
 @RequiredArgsConstructor
 @Slf4j
