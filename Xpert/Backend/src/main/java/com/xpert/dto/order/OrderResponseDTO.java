@@ -2,8 +2,10 @@ package com.xpert.dto.order;
 
 import com.xpert.enums.OrderStatus;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -13,6 +15,8 @@ import java.util.UUID;
  * Used to return order data with full metadata including client, xpert, and timestamps.
  */
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 public class OrderResponseDTO {
 

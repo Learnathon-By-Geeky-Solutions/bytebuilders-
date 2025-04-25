@@ -1,11 +1,13 @@
 package com.xpert.dto.review;
 
 import jakarta.validation.constraints.*;
+import lombok.Builder;
 import lombok.Data;
 
 import java.util.UUID;
 
 @Data
+@Builder
 public class ReviewRequestDTO {
 
     @NotNull(message = "Order ID is required")

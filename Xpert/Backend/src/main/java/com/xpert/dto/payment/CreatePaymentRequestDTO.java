@@ -31,8 +31,9 @@ public class CreatePaymentRequestDTO {
     /**
      * ID of the payment method used for the payment.
      */
-    @NotNull(message = "Payment method ID must not be null")
-    private Integer paymentMethodId;
+    @NotNull(message = "Payment method ID is required")
+    private UUID paymentMethodId;
+
 
     /**
      * Amount paid.

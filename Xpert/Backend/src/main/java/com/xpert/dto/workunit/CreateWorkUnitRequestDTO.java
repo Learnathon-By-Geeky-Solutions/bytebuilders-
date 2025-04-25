@@ -1,6 +1,8 @@
 package com.xpert.dto.workunit;
 
 import jakarta.validation.constraints.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,10 +15,12 @@ import java.time.LocalTime;
  * DTO for creating a new Work Unit, representing a service offered by an expert.
  */
 
+@Builder
 @Getter
 @Setter
 @ToString
 @NoArgsConstructor
+@AllArgsConstructor
 public class CreateWorkUnitRequestDTO {
 
     /**

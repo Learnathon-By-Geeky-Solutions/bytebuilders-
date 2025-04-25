@@ -129,4 +129,41 @@ class UserProfileServiceImplTest {
 
         assertThat(result).containsExactly("New Offer");
     }
+    @Test
+    void shouldThrowWhenCreatingNewProfileIfUserNotFound() {
+        UpdateUserProfileDTO updateDTO = new UpdateUserProfileDTO();
+
+        given(userProfileRepository.findById(userId)).willReturn(Optional.empty());
+        given(userRepository.findById(userId)).willReturn(Optional.empty());
+
+        assertThatThrownBy(() -> userProfileService.updateUserProfile(userId, updateDTO))
+                .isInstanceOf(RuntimeException.class)
+                .hasMessageContaining("User not found");
+
+        then(userRepository).should().findById(userId);
+    }
+    
+    @Test
+    void shouldThrowWhenGettingNotificationsAndProfileMissing() {
+        given(userProfileRepository.findById(userId)).willReturn(Optional.empty());
+
+        assertThatThrownBy(() -> userProfileService.getNotifications(userId))
+                .isInstanceOf(RuntimeException.class)
+                .hasMessageContaining("User profile not found");
+
+        then(userProfileRepository).should().findById(userId);
+    }
+    @Test
+    void shouldThrowWhenUpdatingNotificationsAndProfileMissing() {
+        given(userProfileRepository.findById(userId)).willReturn(Optional.empty());
+
+        assertThatThrownBy(() -> userProfileService.updateNotifications(userId, List.of("Test")))
+                .isInstanceOf(RuntimeException.class)
+                .hasMessageContaining("User profile not found");
+
+        then(userProfileRepository).should().findById(userId);
+    }
+
+
+
 }

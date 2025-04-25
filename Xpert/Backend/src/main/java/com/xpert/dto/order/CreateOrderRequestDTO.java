@@ -1,5 +1,6 @@
 package com.xpert.dto.order;
 
+import lombok.Builder;
 import lombok.Data;
 
 import jakarta.validation.constraints.Future;
@@ -13,6 +14,7 @@ import java.util.UUID;
  * Contains the necessary information to initiate an order in the booking module.
  */
 @Data
+@Builder
 public class CreateOrderRequestDTO {
 
     /**
