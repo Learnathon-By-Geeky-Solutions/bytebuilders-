@@ -11,6 +11,10 @@ jobs:
     name: Build, Test & Analyze with SonarCloud
     runs-on: ubuntu-latest
 
+    defaults:
+      run:
+        working-directory: ./Xpert/Backend
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -30,7 +34,6 @@ jobs:
 
       - name: Build with JaCoCo test coverage
         run: mvn clean verify -DskipTests=false
-        working-directory: ./Xpert/Backend
 
       - name: SonarCloud scan
         uses: SonarSource/sonarcloud-github-action@v2
@@ -42,4 +45,3 @@ jobs:
             -Dsonar.java.binaries=target/classes
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        working-directory: ./Xpert/Backend
