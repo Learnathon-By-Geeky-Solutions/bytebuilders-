@@ -1,0 +1,15 @@
+      - name: Build with JaCoCo test coverage
+        run: mvn clean verify -DskipTests=false
+        working-directory: ./xpert
+
+      - name: SonarCloud scan
+        uses: SonarSource/sonarcloud-github-action@v2
+        with:
+          args: >
+            -Dsonar.projectKey=Learnathon-By-Geeky-Solutions_bytebuilders-
+            -Dsonar.organization=learnathon-by-geeky-solutions
+            -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
+            -Dsonar.java.binaries=target/classes
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        working-directory: ./Xpert
