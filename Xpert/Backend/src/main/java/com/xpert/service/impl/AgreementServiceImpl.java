@@ -21,7 +21,6 @@ import java.util.UUID;
 /**
  * Implementation of AgreementService for managing agreements between clients and experts.
  */
-//annotation
 @Service
 @RequiredArgsConstructor
 @Slf4j
