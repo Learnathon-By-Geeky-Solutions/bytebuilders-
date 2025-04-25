@@ -9,6 +9,7 @@ import java.util.UUID;
 /**
  * Service interface for managing invoices.
  */
+//interface
 public interface InvoiceService {
 
     /**
