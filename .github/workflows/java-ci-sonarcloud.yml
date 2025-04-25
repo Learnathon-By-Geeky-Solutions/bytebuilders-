@@ -35,11 +35,11 @@ jobs:
       - name: SonarCloud scan
         uses: SonarSource/sonarcloud-github-action@v2
         with:
+          projectBaseDir: ./Xpert/Backend
           args: >
             -Dsonar.projectKey=Learnathon-By-Geeky-Solutions_bytebuilders-
             -Dsonar.organization=learnathon-by-geeky-solutions
-            -Dsonar.projectBaseDir=./Xpert/Backend
-            -Dsonar.coverage.jacoco.xmlReportPaths=./Xpert/Backend/target/site/jacoco/jacoco.xml
-            -Dsonar.java.binaries=./Xpert/Backend/target/classes
+            -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
+            -Dsonar.java.binaries=target/classes
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
