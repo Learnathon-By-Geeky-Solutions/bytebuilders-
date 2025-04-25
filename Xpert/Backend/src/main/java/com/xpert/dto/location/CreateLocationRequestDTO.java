@@ -2,6 +2,8 @@ package com.xpert.dto.location;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -11,9 +13,12 @@ import lombok.ToString;
  * DTO for creating a new location entry for an agreement or user profile.
  * Represents the address where the service will be delivered.
  */
+
+@Builder
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 @ToString(exclude = {"streetAddress", "specialInstruction"})
 public class CreateLocationRequestDTO {
 

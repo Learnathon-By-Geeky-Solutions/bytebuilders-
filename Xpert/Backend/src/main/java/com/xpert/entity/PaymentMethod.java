@@ -3,16 +3,23 @@ package com.xpert.entity;
 import com.xpert.converter.EncryptedStringConverter;
 import com.xpert.enums.PaymentMethodType;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.Instant;
+import java.util.UUID;
 
 @Entity
 @Table(name = "payment_methods")
+@Getter
+@Setter
 public class PaymentMethod {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+	@Id
+	@Column(name = "id", nullable = false, columnDefinition = "BINARY(16)")
+	@GeneratedValue(strategy = GenerationType.UUID)
+	private UUID id;
+
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
@@ -52,28 +59,5 @@ public class PaymentMethod {
         this.updatedAt = Instant.now();
     }
 
-    // Getters and Setters
-    public Integer getId() { return id; }
-    public void setId(Integer id) { this.id = id; }
-
-    public Users getUser() { return user; }
-    public void setUser(Users user) { this.user = user; }
-
-    public PaymentMethodType getType() { return type; }
-    public void setType(PaymentMethodType type) { this.type = type; }
-
-    public String getProvider() { return provider; }
-    public void setProvider(String provider) { this.provider = provider; }
-
-    public String getAccountNo() { return accountNo; }
-    public void setAccountNo(String accountNo) { this.accountNo = accountNo; }
-
-    public Boolean getIsDefault() { return isDefault; }
-    public void setIsDefault(Boolean isDefault) { this.isDefault = isDefault; }
-
-    public Instant getCreatedAt() { return createdAt; }
-    public void setCreatedAt(Instant createdAt) { this.createdAt = createdAt; }
-
-    public Instant getUpdatedAt() { return updatedAt; }
-    public void setUpdatedAt(Instant updatedAt) { this.updatedAt = updatedAt; }
+   
 }

@@ -2,6 +2,7 @@ package com.xpert.dto.agreement;
 
 import com.xpert.enums.AgreementType;
 import jakarta.validation.constraints.*;
+import lombok.Builder;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -12,6 +13,7 @@ import java.util.UUID;
  * DTO for creating a new agreement between a client and an expert.
  */
 @Data
+@Builder
 public class CreateAgreementRequestDTO {
 
     /**

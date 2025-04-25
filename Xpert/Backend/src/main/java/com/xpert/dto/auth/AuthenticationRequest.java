@@ -2,6 +2,7 @@ package com.xpert.dto.auth;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import lombok.Builder;
 import lombok.Data;
 
 /**
@@ -9,6 +10,7 @@ import lombok.Data;
  * Requires valid email and password fields.
  */
 @Data
+@Builder
 public class AuthenticationRequest {
 
     /**
