@@ -12,4 +12,4 @@
             -Dsonar.java.binaries=target/classes
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        working-directory: ./Xpert
+        working-directory: ./Xpert/Backend
