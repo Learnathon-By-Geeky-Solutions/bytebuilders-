@@ -3,9 +3,11 @@ package com.xpert.entity;
 import com.xpert.enums.ChatType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -16,11 +18,15 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @Table(name = "chats")
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@ToString(onlyExplicitlyIncluded = true)
 public class Chat {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@EqualsAndHashCode.Include
+	private Long id;
+
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
