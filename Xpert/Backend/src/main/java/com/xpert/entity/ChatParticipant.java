@@ -1,8 +1,10 @@
 package com.xpert.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
@@ -19,6 +21,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @ToString(onlyExplicitlyIncluded = true)
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 
 public class ChatParticipant {
 
@@ -26,6 +30,7 @@ public class ChatParticipant {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@EqualsAndHashCode.Include
 	private Long id;
+
 
     // Many participants belong to one chat
     @ManyToOne(fetch = FetchType.LAZY)
@@ -38,8 +43,6 @@ public class ChatParticipant {
     @Column(name = "user_id", nullable = false)
     private Long userId;
 
-    // Constructors
-    public ChatParticipant() {}
 
     public ChatParticipant(Chat chat, Long userId) {
         this.chat = chat;
