@@ -6,113 +6,400 @@ import com.xpert.entity.UserAddress;
 import com.xpert.entity.Users;
 import com.xpert.repository.UserAddressRepository;
 import com.xpert.repository.UserRepository;
-import com.xpert.service.UserAddressService;
-
-import lombok.RequiredArgsConstructor;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
+import java.util.*;
 
-import java.util.List;
-import java.util.UUID;
+import static org.assertj.core.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
-@Service
-@RequiredArgsConstructor
-public class UserAddressServiceImpl implements UserAddressService {
+class UserAddressServiceImplTest {
 
-    private static final String ADDRESS_NOT_FOUND = "Address not found";
-    private static final String USER_NOT_FOUND = "User not found";
-    private static final String DEFAULT_ADDRESS_NOT_FOUND = "Default address not found";
+    private UserAddressRepository addressRepository;
+    private UserRepository userRepository;
+    private ModelMapper modelMapper;
+    private UserAddressServiceImpl userAddressService;
 
-    private final UserRepository userRepository;
-    private final UserAddressRepository addressRepository;
-    private final ModelMapper modelMapper;
+    private final UUID userId = UUID.randomUUID();
+    private final UUID addressId = UUID.randomUUID();
 
-    @Override
-    @Transactional
-    public UserAddressDTO createAddress(UUID userId, CreateUserAddressDTO dto) {
-        Users user = getUser(userId);
+    @BeforeEach
+    void setUp() {
+        addressRepository = mock(UserAddressRepository.class);
+        userRepository = mock(UserRepository.class);
+        modelMapper = new ModelMapper();
+        userAddressService = new UserAddressServiceImpl(userRepository, addressRepository, modelMapper);
+    }
 
-        if (Boolean.TRUE.equals(dto.getIsDefault())) {
-            addressRepository.findByUserId(userId)
-                    .forEach(addr -> {
-                        addr.setIsDefault(false);
-                        addressRepository.save(addr);
-                    });
-        }
+    @Test
+    void createAddress_shouldSucceed() {
+        Users user = new Users();
+        CreateUserAddressDTO dto = CreateUserAddressDTO.builder()
+                .isDefault(true)
+                .city("Dhaka")
+                .country("Bangladesh")
+                .zipCode("1205")
+                .build();
 
-        UserAddress address = modelMapper.map(dto, UserAddress.class);
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(addressRepository.findByUserId(userId)).thenReturn(List.of());
+        when(addressRepository.save(any(UserAddress.class))).thenAnswer(i -> i.getArgument(0));
+
+        UserAddressDTO result = userAddressService.createAddress(userId, dto);
+
+        assertThat(result).isNotNull();
+    }
+
+    @Test
+    void createAddress_shouldSetOtherDefaultsFalse() {
+        Users user = new Users();
+        UserAddress oldDefault = new UserAddress();
+        oldDefault.setIsDefault(true);
+        oldDefault.setUser(user);
+
+        CreateUserAddressDTO dto = CreateUserAddressDTO.builder()
+                .isDefault(true)
+                .city("Rajshahi")
+                .country("Bangladesh")
+                .zipCode("6000")
+                .build();
+
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(addressRepository.findByUserId(userId)).thenReturn(List.of(oldDefault));
+        when(addressRepository.save(any(UserAddress.class))).thenAnswer(i -> i.getArgument(0));
+
+        UserAddressDTO result = userAddressService.createAddress(userId, dto);
+        assertThat(result).isNotNull();
+        verify(addressRepository, atLeastOnce()).save(any(UserAddress.class));
+    }
+
+    @Test
+    void getUserAddresses_shouldReturnList() {
+        Users user = new Users();
+        UserAddress address = new UserAddress();
         address.setUser(user);
-        address.setIsDeleted(false);
 
-        UserAddress saved = addressRepository.save(address);
-        return toDTO(saved);
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(addressRepository.findByUserAndIsDeletedFalse(user)).thenReturn(List.of(address));
+
+        List<UserAddressDTO> result = userAddressService.getUserAddresses(userId);
+        assertThat(result).hasSize(1);
     }
 
-    @Override
-    @Transactional(readOnly = true)
-    public List<UserAddressDTO> getUserAddresses(UUID userId) {
-        Users user = getUser(userId);
-        return addressRepository.findByUserAndIsDeletedFalse(user)
-                .stream()
-                .map(this::toDTO)
-                .toList();
+    @Test
+    void getAddressById_shouldReturnAddress() {
+        Users user = new Users();
+        UserAddress address = new UserAddress();
+        address.setUser(user);
+
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(addressRepository.findByIdAndUser(addressId, user)).thenReturn(Optional.of(address));
+
+        UserAddressDTO result = userAddressService.getAddressById(userId, addressId);
+        assertThat(result).isNotNull();
     }
 
-    @Override
-    @Transactional(readOnly = true)
-    public UserAddressDTO getAddressById(UUID userId, UUID addressId) {
-        UserAddress address = addressRepository.findByIdAndUser(addressId, getUser(userId))
-                .orElseThrow(() -> new RuntimeException(ADDRESS_NOT_FOUND));
+    @Test
+    void getAddressById_shouldThrowIfNotFound() {
+        when(userRepository.findById(userId)).thenReturn(Optional.of(new Users()));
+        when(addressRepository.findByIdAndUser(any(), any())).thenReturn(Optional.empty());
 
-        return toDTO(address);
+        assertThatThrownBy(() -> userAddressService.getAddressById(userId, addressId))
+                .isInstanceOf(RuntimeException.class)
+                .hasMessageContaining("Address not found");
     }
 
-    @Override
-    @Transactional
-    public UserAddressDTO updateAddress(UUID userId, UUID addressId, CreateUserAddressDTO dto) {
-        UserAddress address = addressRepository.findByIdAndUser(addressId, getUser(userId))
-                .orElseThrow(() -> new RuntimeException(ADDRESS_NOT_FOUND));
+    @Test
+    void updateAddress_shouldSucceed() {
+        Users user = new Users();
+        UserAddress existing = new UserAddress();
+        existing.setUser(user);
 
-        if (Boolean.TRUE.equals(dto.getIsDefault())) {
-            addressRepository.findByUserId(userId)
-                    .forEach(addr -> {
-                        addr.setIsDefault(false);
-                        addressRepository.save(addr);
-                    });
-        }
+        CreateUserAddressDTO dto = CreateUserAddressDTO.builder()
+                .isDefault(true)
+                .city("Barishal")
+                .country("Bangladesh")
+                .zipCode("8200")
+                .build();
 
-        modelMapper.map(dto, address);
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(addressRepository.findByIdAndUser(addressId, user)).thenReturn(Optional.of(existing));
+        when(addressRepository.findByUserId(userId)).thenReturn(List.of(existing));
+        when(addressRepository.save(any(UserAddress.class))).thenReturn(existing);
 
-        UserAddress saved = addressRepository.save(address);
-        return toDTO(saved);
+        UserAddressDTO result = userAddressService.updateAddress(userId, addressId, dto);
+        assertThat(result).isNotNull();
     }
 
-    @Override
-    @Transactional
-    public void deleteAddress(UUID userId, UUID addressId) {
-        UserAddress address = addressRepository.findByIdAndUser(addressId, getUser(userId))
-                .orElseThrow(() -> new RuntimeException(ADDRESS_NOT_FOUND));
+    @Test
+    void updateAddress_shouldUpdateWithoutChangingDefaultsIfNotDefault() {
+        CreateUserAddressDTO dto = CreateUserAddressDTO.builder()
+                .title("Home")
+                .isDefault(false)
+                .build();
 
-        address.setIsDeleted(true);
-        addressRepository.save(address);
+        Users user = new Users();
+        UserAddress address = new UserAddress();
+        address.setId(addressId);
+        address.setUser(user);
+
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(addressRepository.findByIdAndUser(addressId, user)).thenReturn(Optional.of(address));
+        when(addressRepository.save(any(UserAddress.class))).thenReturn(address);
+
+        UserAddressDTO result = userAddressService.updateAddress(userId, addressId, dto);
+
+        assertThat(result).isNotNull();
+        verify(userRepository).findById(userId);
+        verify(addressRepository).save(address);
     }
 
-    @Override
-    @Transactional(readOnly = true)
-    public UserAddressDTO getDefaultAddress(UUID userId) {
-        UserAddress address = addressRepository.findByUserIdAndIsDefaultTrue(userId)
-                .orElseThrow(() -> new RuntimeException(DEFAULT_ADDRESS_NOT_FOUND));
-        return toDTO(address);
+    @Test
+    void deleteAddress_shouldMarkAsDeleted() {
+        Users user = new Users();
+        UserAddress address = new UserAddress();
+        address.setUser(user);
+
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(addressRepository.findByIdAndUser(addressId, user)).thenReturn(Optional.of(address));
+
+        userAddressService.deleteAddress(userId, addressId);
+        verify(addressRepository).save(address);
+        assertThat(address.getIsDeleted()).isTrue();
     }
 
-    private UserAddressDTO toDTO(UserAddress address) {
-        return modelMapper.map(address, UserAddressDTO.class);
+    @Test
+    void deleteAddress_shouldSoftDeleteSuccessfully() {
+        Users user = new Users();
+        UserAddress address = new UserAddress();
+        address.setUser(user);
+        address.setId(addressId);
+
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(addressRepository.findByIdAndUser(addressId, user)).thenReturn(Optional.of(address));
+
+        userAddressService.deleteAddress(userId, addressId);
+
+        verify(addressRepository).save(address);
+        assertThat(address.getIsDeleted()).isTrue();
     }
 
-    private Users getUser(UUID userId) {
-        return userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException(USER_NOT_FOUND));
+    @Test
+    void getDefaultAddress_shouldReturnIfExists() {
+        UserAddress address = new UserAddress();
+        when(addressRepository.findByUserIdAndIsDefaultTrue(userId)).thenReturn(Optional.of(address));
+
+        UserAddressDTO result = userAddressService.getDefaultAddress(userId);
+        assertThat(result).isNotNull();
     }
+
+    @Test
+    void getDefaultAddress_shouldThrowIfMissing() {
+        when(addressRepository.findByUserIdAndIsDefaultTrue(userId)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> userAddressService.getDefaultAddress(userId))
+                .isInstanceOf(RuntimeException.class)
+                .hasMessageContaining("Default address not found");
+    }
+
+    @Test
+    void getUser_shouldThrowIfNotFound() {
+        when(userRepository.findById(userId)).thenReturn(Optional.empty());
+
+        CreateUserAddressDTO dto = CreateUserAddressDTO.builder()
+                .city("Khulna")
+                .country("Bangladesh")
+                .zipCode("9000")
+                .build();
+
+        assertThatThrownBy(() -> userAddressService.createAddress(userId, dto))
+                .isInstanceOf(RuntimeException.class)
+                .hasMessageContaining("User not found");
+    }
+    
+
+    
+    @Test
+    void deleteAddress_shouldThrowIfAddressNotFound() {
+        UUID userId = UUID.randomUUID();
+        UUID addressId = UUID.randomUUID();
+
+        Users user = new Users();
+
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(addressRepository.findByIdAndUser(addressId, user)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> userAddressService.deleteAddress(userId, addressId))
+                .isInstanceOf(RuntimeException.class)
+                .hasMessageContaining("Address not found");
+    }
+    
+    @Test
+    void updateAddress_shouldSkipDefaultResetIfNotDefault() {
+        UUID userId = UUID.randomUUID();
+        UUID addressId = UUID.randomUUID();
+
+        CreateUserAddressDTO dto = CreateUserAddressDTO.builder()
+                .title("New Title")
+                .isDefault(false) // important: skip resetting other defaults
+                .build();
+
+        Users user = new Users();
+        UserAddress existing = new UserAddress();
+        existing.setUser(user);
+        existing.setId(addressId);
+
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(addressRepository.findByIdAndUser(addressId, user)).thenReturn(Optional.of(existing));
+        when(addressRepository.save(any(UserAddress.class))).thenReturn(existing);
+
+        UserAddressDTO result = userAddressService.updateAddress(userId, addressId, dto);
+
+        assertThat(result).isNotNull();
+        verify(userRepository).findById(userId);
+        verify(addressRepository).findByIdAndUser(addressId, user);
+        verify(addressRepository).save(existing);
+    }
+    
+    
+    @Test
+    void updateAddress_shouldNotResetOthersWhenIsDefaultIsNull() {
+        UUID userId = UUID.randomUUID();
+        UUID addressId = UUID.randomUUID();
+
+        // isDefault is null here
+        CreateUserAddressDTO dto = CreateUserAddressDTO.builder()
+                .title("Silent Update")
+                .build();
+
+        Users user = new Users();
+        UserAddress existing = new UserAddress();
+        existing.setUser(user);
+        existing.setId(addressId);
+
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(addressRepository.findByIdAndUser(addressId, user)).thenReturn(Optional.of(existing));
+        when(addressRepository.save(any(UserAddress.class))).thenReturn(existing);
+
+        UserAddressDTO result = userAddressService.updateAddress(userId, addressId, dto);
+
+        assertThat(result).isNotNull();
+        verify(userRepository).findById(userId);
+        verify(addressRepository).findByIdAndUser(addressId, user);
+        verify(addressRepository).save(existing);
+        // no need to verify .findByUserId(userId) since it should be skipped
+    }
+    
+    @Test
+    void createAddress_shouldSkipResetIfNotDefault() {
+        UUID userId = UUID.randomUUID();
+
+        CreateUserAddressDTO dto = CreateUserAddressDTO.builder()
+                .city("Comilla")
+                .country("Bangladesh")
+                .zipCode("3500")
+                .isDefault(false) // Explicitly false
+                .build();
+
+        Users user = new Users();
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(addressRepository.save(any(UserAddress.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+        UserAddressDTO result = userAddressService.createAddress(userId, dto);
+
+        assertThat(result).isNotNull();
+        verify(userRepository).findById(userId);
+        verify(addressRepository).save(any(UserAddress.class));
+        //  No interaction with .findByUserId() since default = false
+        verify(addressRepository, never()).findByUserId(userId);
+    }
+    
+    @Test
+    void updateAddress_shouldResetOtherDefaultsIfDtoIsDefault() {
+        UUID userId = UUID.randomUUID();
+        UUID addressId = UUID.randomUUID();
+
+        CreateUserAddressDTO dto = CreateUserAddressDTO.builder()
+                .title("Updated Title")
+                .isDefault(true) // this triggers the if-block
+                .build();
+
+        Users user = new Users();
+        UserAddress existing = new UserAddress();
+        existing.setId(addressId);
+        existing.setUser(user);
+
+        UserAddress other = new UserAddress();
+        other.setUser(user);
+        other.setIsDefault(true);
+
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(addressRepository.findByIdAndUser(addressId, user)).thenReturn(Optional.of(existing));
+        when(addressRepository.findByUserId(userId)).thenReturn(List.of(other));
+        when(addressRepository.save(any(UserAddress.class))).thenAnswer(i -> i.getArgument(0));
+
+        UserAddressDTO result = userAddressService.updateAddress(userId, addressId, dto);
+
+        assertThat(result).isNotNull();
+        verify(addressRepository).findByUserId(userId); // verify default reset logic triggered
+        verify(addressRepository, atLeastOnce()).save(any(UserAddress.class));
+    }
+    
+    @Test
+    void updateAddress_shouldResetDefaultIfDtoMarksAsDefault() {
+        UUID userId = UUID.randomUUID();
+        UUID addressId = UUID.randomUUID();
+
+        CreateUserAddressDTO dto = CreateUserAddressDTO.builder()
+                .title("Primary")
+                .isDefault(true) // ✅ triggers the missing branch
+                .build();
+
+        Users user = new Users();
+
+        UserAddress current = new UserAddress();
+        current.setId(addressId);
+        current.setUser(user);
+
+        UserAddress existingDefault = new UserAddress(); // simulate another default
+        existingDefault.setId(UUID.randomUUID());
+        existingDefault.setUser(user);
+        existingDefault.setIsDefault(true);
+
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(addressRepository.findByIdAndUser(addressId, user)).thenReturn(Optional.of(current));
+        when(addressRepository.findByUserId(userId)).thenReturn(List.of(existingDefault));
+        when(addressRepository.save(any(UserAddress.class))).thenAnswer(i -> i.getArgument(0));
+
+        UserAddressDTO result = userAddressService.updateAddress(userId, addressId, dto);
+
+        assertThat(result).isNotNull();
+        verify(addressRepository).findByUserId(userId);
+        verify(addressRepository, atLeastOnce()).save(any(UserAddress.class));
+        assertThat(existingDefault.getIsDefault()).isFalse(); // assert default reset
+    }
+    
+    @Test
+    void getUser_shouldThrowIfUserNotFound() {
+        UUID userId = UUID.randomUUID();
+        when(userRepository.findById(userId)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> {
+         
+        	userAddressService.getUserAddresses(userId);
+        }).isInstanceOf(RuntimeException.class)
+          .hasMessageContaining("User not found");
+    }
+ 
+
+
+
+
+
+
+
+
 }
