@@ -1,6 +1,6 @@
 package com.xpert.repository;
 
-import com.xpert.entity.Chat;
+import com.xpert.entity.chat.Chat;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
