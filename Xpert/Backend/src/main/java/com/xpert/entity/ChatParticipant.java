@@ -1,22 +1,38 @@
 package com.xpert.entity;
 
 import jakarta.persistence.*;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+
 
 @Entity
 @Table(
     name = "chat_participants",
     uniqueConstraints = @UniqueConstraint(columnNames = {"chat_id", "user_id"})
 )
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@ToString(onlyExplicitlyIncluded = true)
+@Getter
+@Setter
+
 public class ChatParticipant {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@EqualsAndHashCode.Include
+	private Long id;
 
     // Many participants belong to one chat
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "chat_id", nullable = false)
+    @JsonIgnore
     private Chat chat;
+
 
     // Reference to the User entity (assuming UUID as user ID)
     @Column(name = "user_id", nullable = false)
@@ -30,13 +46,5 @@ public class ChatParticipant {
         this.userId = userId;
     }
 
-    // Getters & Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-
-    public Chat getChat() { return chat; }
-    public void setChat(Chat chat) { this.chat = chat; }
-
-    public Long getUserId() { return userId; }
-    public void setUserId(Long userId) { this.userId = userId; }
+   
 }
