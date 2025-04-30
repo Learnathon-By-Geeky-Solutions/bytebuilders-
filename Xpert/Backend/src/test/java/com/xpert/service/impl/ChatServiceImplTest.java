@@ -2,8 +2,8 @@ package com.xpert.service.impl;
 
 import com.xpert.dto.ChatDTO;
 import com.xpert.dto.CreateChatRequestDTO;
-import com.xpert.entity.Chat;
-import com.xpert.entity.ChatParticipant;
+import com.xpert.entity.chat.Chat;
+import com.xpert.entity.chat.ChatParticipant;
 import com.xpert.repository.ChatParticipantRepository;
 import com.xpert.repository.ChatRepository;
 import org.junit.jupiter.api.BeforeEach;

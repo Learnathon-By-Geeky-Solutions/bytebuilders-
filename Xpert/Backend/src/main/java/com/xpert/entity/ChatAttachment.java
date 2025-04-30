@@ -1,5 +1,7 @@
 package com.xpert.entity;
 
+import com.xpert.entity.chat.ChatMessage;
+
 import jakarta.persistence.*;
 
 @Entity
